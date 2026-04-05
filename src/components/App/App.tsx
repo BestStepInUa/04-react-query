@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { fetchMovies } from '@/services/movieService'
@@ -16,6 +16,7 @@ export default function App() {
 	const [page, setPage] = useState(1)
 	const [activeMovie, setActiveMovie] = useState<Movie | null>(null)
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const lastToastQueryRef = useRef('')
 
 	const { data, isError, isPending, refetch } = useQuery({
 		queryKey: ['movies', query, page],
@@ -52,13 +53,16 @@ export default function App() {
 
 	useEffect(() => {
 		if (!query || !data || page !== 1) return
+		if (lastToastQueryRef.current === query) return
 
 		if (data.results.length === 0) {
 			toast.error('No movies found for your request.', { id: 'unique-toast' })
+			lastToastQueryRef.current = query
 			return
 		}
 
 		toast.success('Successfully loaded movies.', { id: 'unique-toast' })
+		lastToastQueryRef.current = query
 	}, [data, page, query])
 
 	useEffect(() => {
