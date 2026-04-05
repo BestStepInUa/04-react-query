@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import { Formik } from 'formik'
 import toast from 'react-hot-toast'
 import css from './SearchBar.module.css'
 
@@ -7,21 +6,10 @@ interface SearchBarProps {
 	onSubmit: (query: string) => void
 }
 
-interface SearchBarFormValues {
-	query: string
-}
-
-const INITIAL_VALUES: SearchBarFormValues = {
-	query: '',
-}
-
 export default function SearchBar({ onSubmit }: SearchBarProps) {
 	const inputRef = useRef<HTMLInputElement>(null)
 
-	const handleSubmit = (
-		formData: FormData,
-		resetForm: (nextState?: { values: SearchBarFormValues }) => void,
-	) => {
+	const handleSubmit = (formData: FormData) => {
 		const queryValue = formData.get('query')
 		const query = typeof queryValue === 'string' ? queryValue.trim() : ''
 
@@ -32,7 +20,6 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
 		}
 
 		onSubmit(query)
-		resetForm({ values: INITIAL_VALUES })
 		inputRef.current?.focus()
 	}
 
@@ -47,26 +34,20 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
 				>
 					Powered by TMDB
 				</a>
-				<Formik<SearchBarFormValues> initialValues={INITIAL_VALUES} onSubmit={() => undefined}>
-					{({ values, handleChange, resetForm }) => (
-						<form className={css.form} action={(formData) => handleSubmit(formData, resetForm)}>
-							<input
-								ref={inputRef}
-								className={css.input}
-								type='text'
-								name='query'
-								value={values.query}
-								onChange={handleChange}
-								autoComplete='off'
-								placeholder='Search movies...'
-								autoFocus
-							/>
-							<button className={css.button} type='submit'>
-								Search
-							</button>
-						</form>
-					)}
-				</Formik>
+				<form className={css.form} action={handleSubmit}>
+					<input
+						ref={inputRef}
+						className={css.input}
+						type='text'
+						name='query'
+						autoComplete='off'
+						placeholder='Search movies...'
+						autoFocus
+					/>
+					<button className={css.button} type='submit'>
+						Search
+					</button>
+				</form>
 			</div>
 		</header>
 	)
