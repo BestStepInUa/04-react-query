@@ -1,5 +1,12 @@
 import axios from 'axios'
-import type { MoviesResponse } from '@/types/movie'
+import type { Movie } from '@/types/movie'
+
+interface MoviesResponse {
+	page: number
+	results: Movie[]
+	total_pages: number
+	total_results: number
+}
 
 const api = axios.create({
 	baseURL: import.meta.env.VITE_BASE_URL.replace(/\/$/, ''),

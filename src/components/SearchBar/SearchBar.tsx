@@ -26,6 +26,7 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
 
 		if (!query) {
 			toast.error('Please enter your search query.', { id: 'unique-toast' })
+			inputRef.current?.focus()
 			setSubmitting(false)
 			return
 		}
