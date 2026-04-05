@@ -79,7 +79,7 @@ export default function App() {
 
 	return (
 		<div className={css.app}>
-			<SearchBar onSubmit={handleSubmit} initialQuery={query} />
+			<SearchBar onSubmit={handleSubmit} />
 
 			{isLoading && <Loader />}
 			{isError && <ErrorMessage />}

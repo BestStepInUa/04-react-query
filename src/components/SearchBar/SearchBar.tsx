@@ -1,20 +1,26 @@
+import { useRef } from 'react'
 import { Field, Form, Formik, type FormikHelpers } from 'formik'
 import toast from 'react-hot-toast'
 import css from './SearchBar.module.css'
 
 interface SearchBarProps {
 	onSubmit: (query: string) => void
-	initialQuery: string
 }
 
 interface SearchBarFormValues {
 	query: string
 }
 
-export default function SearchBar({ onSubmit, initialQuery }: SearchBarProps) {
+const INITIAL_VALUES: SearchBarFormValues = {
+	query: '',
+}
+
+export default function SearchBar({ onSubmit }: SearchBarProps) {
+	const inputRef = useRef<HTMLInputElement>(null)
+
 	const handleSubmit = (
 		values: SearchBarFormValues,
-		{ setSubmitting }: FormikHelpers<SearchBarFormValues>,
+		{ resetForm, setSubmitting }: FormikHelpers<SearchBarFormValues>,
 	) => {
 		const query = values.query.trim()
 
@@ -25,6 +31,8 @@ export default function SearchBar({ onSubmit, initialQuery }: SearchBarProps) {
 		}
 
 		onSubmit(query)
+		resetForm()
+		inputRef.current?.focus()
 		setSubmitting(false)
 	}
 
@@ -39,13 +47,10 @@ export default function SearchBar({ onSubmit, initialQuery }: SearchBarProps) {
 				>
 					Powered by TMDB
 				</a>
-				<Formik<SearchBarFormValues>
-					initialValues={{ query: initialQuery }}
-					enableReinitialize
-					onSubmit={handleSubmit}
-				>
+				<Formik<SearchBarFormValues> initialValues={INITIAL_VALUES} onSubmit={handleSubmit}>
 					<Form className={css.form}>
 						<Field
+							innerRef={inputRef}
 							className={css.input}
 							type='text'
 							name='query'
